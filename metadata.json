@@ -1,0 +1,6 @@
+{
+  "name": "EXPERTS GROUP COMPAGNY - Ascenseurs & Élévation Conakry Guinée",
+  "description": "Vente, installation et maintenance d'ascenseurs de haute qualité en République de Guinée (Conakry). Ascenseurs MRL, panoramiques, monte-charges et contrats 24h/7j.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
