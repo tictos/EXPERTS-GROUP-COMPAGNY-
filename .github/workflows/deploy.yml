@@ -30,16 +30,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
-      - name: Installation robuste des dépendances
-        # Utilise npm ci avec fallback sur npm install --legacy-peer-deps pour éviter tout échec de lockfile ou de résolution
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci --legacy-peer-deps || npm install --legacy-peer-deps
-          else
-            npm install --legacy-peer-deps
-          fi
+      - name: Installation des dépendances
+        run: npm install --legacy-peer-deps --no-audit --no-fund
 
       - name: Construction des fichiers statiques (Build Vite)
         run: npm run build
