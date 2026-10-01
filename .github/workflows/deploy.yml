@@ -1,0 +1,62 @@
+name: Déploiement GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+# Permissions requises pour déployer sur GitHub Pages via GitHub Actions
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permet d'annuler les builds précédents si un nouveau commit est poussé
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Compilation du projet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupération du code source
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Installation robuste des dépendances
+        # Utilise npm ci avec fallback sur npm install --legacy-peer-deps pour éviter tout échec de lockfile ou de résolution
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+          else
+            npm install --legacy-peer-deps
+          fi
+
+      - name: Construction des fichiers statiques (Build Vite)
+        run: npm run build
+
+      - name: Téléversement de l'artefact pour GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+  deploy:
+    name: Déploiement en ligne
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Déploiement vers GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
